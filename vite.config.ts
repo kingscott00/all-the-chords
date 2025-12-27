@@ -58,4 +58,5 @@ export default defineConfig({
       }
     })
   ],
+  base: '/all-the-chords/'
 })
