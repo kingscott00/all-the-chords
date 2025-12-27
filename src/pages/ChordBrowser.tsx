@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ChordCategory, ChordType, ROOT_NOTES } from "../types";
+import { useState, useMemo, useCallback } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { ChordCategory, ChordType, ChordVoicing, ROOT_NOTES } from "../types";
 import { Header, RootSelector, CategoryNav } from "../components/Navigation";
 import { ChordGrid } from "../components/ChordGrid";
 import {
@@ -10,10 +10,18 @@ import {
   getAvailableChordTypes,
 } from "../data/chordDatabase";
 import { parseRootNote } from "../utils/noteUtils";
+import { useAudio, useFavorites } from "../hooks";
 
 export function ChordBrowser() {
   const { root } = useParams<{ root?: string }>();
   const navigate = useNavigate();
+
+  // Audio hook
+  const { playChord, isPlaying, settings, setMuted } = useAudio();
+  const [playingChordId, setPlayingChordId] = useState<string | null>(null);
+
+  // Favorites hook
+  const { isFavorite, toggleFavorite, favoriteCount } = useFavorites();
 
   // Default to "A" if no root specified
   const selectedRoot = root
@@ -57,6 +65,17 @@ export function ChordBrowser() {
     navigate(`/chords/${rootPath}`);
   };
 
+  const handleChordPlay = useCallback(
+    async (voicing: ChordVoicing) => {
+      if (isPlaying) return;
+      setPlayingChordId(voicing.id);
+      await playChord(voicing);
+      // Reset after a delay to show visual feedback
+      setTimeout(() => setPlayingChordId(null), 500);
+    },
+    [playChord, isPlaying]
+  );
+
   const displayRoot = parseRootNote(selectedRoot, preferFlat);
 
   return (
@@ -68,12 +87,25 @@ export function ChordBrowser() {
         <section className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-gray-700">Root Note</h2>
-            <button
-              onClick={() => setPreferFlat(!preferFlat)}
-              className="text-sm text-blue-600 hover:text-blue-700"
-            >
-              {preferFlat ? "Show Sharps" : "Show Flats"}
-            </button>
+            <div className="flex items-center gap-4">
+              {favoriteCount > 0 && (
+                <Link
+                  to="/favorites"
+                  className="text-sm text-red-500 hover:text-red-600 flex items-center gap-1"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                  </svg>
+                  {favoriteCount}
+                </Link>
+              )}
+              <button
+                onClick={() => setPreferFlat(!preferFlat)}
+                className="text-sm text-blue-600 hover:text-blue-700"
+              >
+                {preferFlat ? "Show Sharps" : "Show Flats"}
+              </button>
+            </div>
           </div>
           <RootSelector
             selectedRoot={selectedRoot}
@@ -97,7 +129,7 @@ export function ChordBrowser() {
         </section>
 
         {/* Options */}
-        <section className="mb-6 flex items-center gap-4">
+        <section className="mb-6 flex flex-wrap items-center gap-4">
           <label className="flex items-center gap-2 text-sm text-gray-600">
             <input
               type="checkbox"
@@ -106,6 +138,15 @@ export function ChordBrowser() {
               className="rounded border-gray-300"
             />
             Show finger numbers
+          </label>
+          <label className="flex items-center gap-2 text-sm text-gray-600">
+            <input
+              type="checkbox"
+              checked={settings.muted}
+              onChange={(e) => setMuted(e.target.checked)}
+              className="rounded border-gray-300"
+            />
+            Mute audio
           </label>
         </section>
 
@@ -120,15 +161,19 @@ export function ChordBrowser() {
             </span>
           </div>
 
+          <p className="text-sm text-gray-500 mb-4">
+            Click any chord to hear it. Click the heart to save to favorites.
+          </p>
+
           {voicings.length > 0 ? (
             <ChordGrid
               voicings={voicings}
               showFingers={showFingers}
               groupByType={!selectedChordType}
-              onChordClick={(voicing) => {
-                console.log("Clicked chord:", voicing);
-                // Future: open detail modal or play audio
-              }}
+              onChordPlay={handleChordPlay}
+              playingChordId={playingChordId}
+              isFavorite={isFavorite}
+              onToggleFavorite={toggleFavorite}
             />
           ) : (
             <div className="text-center py-12 text-gray-500">

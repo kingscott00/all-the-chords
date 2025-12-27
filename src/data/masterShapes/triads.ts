@@ -1,6 +1,6 @@
 import { ChordType, ChordCategory, MasterChordShape } from "../../types";
 
-// Master shapes defined for 'E' root (allows easy transposition)
+// Master shapes defined for various roots (allows easy transposition)
 // Strings array: [lowE, A, D, G, B, highE] - null = muted, 0 = open
 
 export const MAJOR_SHAPES: MasterChordShape[] = [
@@ -145,4 +145,317 @@ export const MINOR_SHAPES: MasterChordShape[] = [
   },
 ];
 
-export const TRIADS: MasterChordShape[] = [...MAJOR_SHAPES, ...MINOR_SHAPES];
+// Augmented chord shapes (symmetrical - same shape every 4 frets)
+export const AUGMENTED_SHAPES: MasterChordShape[] = [
+  // E-form augmented
+  {
+    chordType: ChordType.AUGMENTED,
+    category: ChordCategory.TRIAD,
+    positionNumber: 1,
+    masterRoot: "E",
+    relativeFrets: [0, 3, 2, 1, 1, 0],
+    fingers: [0, 4, 3, 1, 2, 0],
+    barres: [],
+    rootStringIndices: [0, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+  // A-form augmented
+  {
+    chordType: ChordType.AUGMENTED,
+    category: ChordCategory.TRIAD,
+    positionNumber: 2,
+    masterRoot: "A",
+    relativeFrets: [null, 0, 3, 2, 2, 1],
+    fingers: [null, 0, 4, 2, 3, 1],
+    barres: [],
+    rootStringIndices: [1],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+  // C-form augmented (compact voicing)
+  {
+    chordType: ChordType.AUGMENTED,
+    category: ChordCategory.TRIAD,
+    positionNumber: 3,
+    masterRoot: "C",
+    relativeFrets: [null, 3, 2, 1, 1, null],
+    fingers: [null, 4, 3, 1, 2, null],
+    barres: [],
+    rootStringIndices: [1],
+    usesOpenStrings: false,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+  // G-form augmented
+  {
+    chordType: ChordType.AUGMENTED,
+    category: ChordCategory.TRIAD,
+    positionNumber: 4,
+    masterRoot: "G",
+    relativeFrets: [3, 2, 1, 0, 0, 3],
+    fingers: [3, 2, 1, 0, 0, 4],
+    barres: [],
+    rootStringIndices: [0, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 3,
+    commonUsage: false,
+  },
+];
+
+// Diminished triad shapes (symmetrical - same shape every 3 frets)
+export const DIMINISHED_SHAPES: MasterChordShape[] = [
+  // E-form diminished
+  {
+    chordType: ChordType.DIMINISHED,
+    category: ChordCategory.TRIAD,
+    positionNumber: 1,
+    masterRoot: "E",
+    relativeFrets: [0, 1, 2, 0, null, null],
+    fingers: [0, 1, 2, 0, null, null],
+    barres: [],
+    rootStringIndices: [0],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+  // A-form diminished
+  {
+    chordType: ChordType.DIMINISHED,
+    category: ChordCategory.TRIAD,
+    positionNumber: 2,
+    masterRoot: "A",
+    relativeFrets: [null, 0, 1, 2, 1, null],
+    fingers: [null, 0, 1, 3, 2, null],
+    barres: [],
+    rootStringIndices: [1],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+  // D-form diminished
+  {
+    chordType: ChordType.DIMINISHED,
+    category: ChordCategory.TRIAD,
+    positionNumber: 3,
+    masterRoot: "D",
+    relativeFrets: [null, null, 0, 1, 0, 1],
+    fingers: [null, null, 0, 2, 0, 3],
+    barres: [],
+    rootStringIndices: [2],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+  // Higher position diminished
+  {
+    chordType: ChordType.DIMINISHED,
+    category: ChordCategory.TRIAD,
+    positionNumber: 4,
+    masterRoot: "B",
+    relativeFrets: [null, 2, 3, 4, 3, null],
+    fingers: [null, 1, 2, 4, 3, null],
+    barres: [],
+    rootStringIndices: [1],
+    usesOpenStrings: false,
+    transposable: true,
+    difficulty: 3,
+    commonUsage: true,
+  },
+];
+
+// Sus4 chord shapes
+export const SUS4_SHAPES: MasterChordShape[] = [
+  // Esus4
+  {
+    chordType: ChordType.SUS4,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "E",
+    positionNumber: 1,
+    masterRoot: "E",
+    relativeFrets: [0, 2, 2, 2, 0, 0],
+    fingers: [0, 2, 3, 4, 0, 0],
+    barres: [],
+    rootStringIndices: [0, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+  // Asus4
+  {
+    chordType: ChordType.SUS4,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "A",
+    positionNumber: 2,
+    masterRoot: "A",
+    relativeFrets: [null, 0, 2, 2, 3, 0],
+    fingers: [null, 0, 1, 2, 4, 0],
+    barres: [],
+    rootStringIndices: [1, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+  // Dsus4
+  {
+    chordType: ChordType.SUS4,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "D",
+    positionNumber: 3,
+    masterRoot: "D",
+    relativeFrets: [null, null, 0, 2, 3, 3],
+    fingers: [null, null, 0, 1, 2, 3],
+    barres: [],
+    rootStringIndices: [2],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+  // Gsus4
+  {
+    chordType: ChordType.SUS4,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "G",
+    positionNumber: 4,
+    masterRoot: "G",
+    relativeFrets: [3, 3, 0, 0, 1, 3],
+    fingers: [2, 3, 0, 0, 1, 4],
+    barres: [],
+    rootStringIndices: [0, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+  // Csus4
+  {
+    chordType: ChordType.SUS4,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "C",
+    positionNumber: 5,
+    masterRoot: "C",
+    relativeFrets: [null, 3, 3, 0, 1, 1],
+    fingers: [null, 3, 4, 0, 1, 1],
+    barres: [{ fret: 1, fromString: 4, toString: 5, finger: 1 }],
+    rootStringIndices: [1],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+];
+
+// Sus2 chord shapes
+export const SUS2_SHAPES: MasterChordShape[] = [
+  // Esus2
+  {
+    chordType: ChordType.SUS2,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "E",
+    positionNumber: 1,
+    masterRoot: "E",
+    relativeFrets: [0, 2, 4, 4, 0, 0],
+    fingers: [0, 1, 3, 4, 0, 0],
+    barres: [],
+    rootStringIndices: [0, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+  // Asus2
+  {
+    chordType: ChordType.SUS2,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "A",
+    positionNumber: 2,
+    masterRoot: "A",
+    relativeFrets: [null, 0, 2, 2, 0, 0],
+    fingers: [null, 0, 1, 2, 0, 0],
+    barres: [],
+    rootStringIndices: [1, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+  // Dsus2
+  {
+    chordType: ChordType.SUS2,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "D",
+    positionNumber: 3,
+    masterRoot: "D",
+    relativeFrets: [null, null, 0, 2, 3, 0],
+    fingers: [null, null, 0, 1, 2, 0],
+    barres: [],
+    rootStringIndices: [2],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+  // Gsus2
+  {
+    chordType: ChordType.SUS2,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "G",
+    positionNumber: 4,
+    masterRoot: "G",
+    relativeFrets: [3, 0, 0, 0, 3, 3],
+    fingers: [2, 0, 0, 0, 3, 4],
+    barres: [],
+    rootStringIndices: [0, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+  // Csus2
+  {
+    chordType: ChordType.SUS2,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "C",
+    positionNumber: 5,
+    masterRoot: "C",
+    relativeFrets: [null, 3, 0, 0, 1, 0],
+    fingers: [null, 3, 0, 0, 1, 0],
+    barres: [],
+    rootStringIndices: [1],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+];
+
+export const TRIADS: MasterChordShape[] = [
+  ...MAJOR_SHAPES,
+  ...MINOR_SHAPES,
+  ...AUGMENTED_SHAPES,
+  ...DIMINISHED_SHAPES,
+  ...SUS4_SHAPES,
+  ...SUS2_SHAPES,
+];

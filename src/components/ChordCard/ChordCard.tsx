@@ -1,33 +1,55 @@
 import { ChordVoicing, CHORD_TYPE_INFO } from "../../types";
 import { ChordDiagram } from "../ChordDiagram";
+import { FavoriteButton } from "./FavoriteButton";
 
 interface ChordCardProps {
   voicing: ChordVoicing;
   showFingers?: boolean;
-  onClick?: () => void;
+  onPlay?: (voicing: ChordVoicing) => void;
+  isPlaying?: boolean;
+  isFavorite?: boolean;
+  onToggleFavorite?: (id: string) => void;
   className?: string;
 }
 
 export function ChordCard({
   voicing,
   showFingers = false,
-  onClick,
+  onPlay,
+  isPlaying = false,
+  isFavorite = false,
+  onToggleFavorite,
   className = "",
 }: ChordCardProps) {
   const chordInfo = CHORD_TYPE_INFO[voicing.chordType];
   const chordName = `${voicing.root}${chordInfo.shortName}`;
 
+  const handleClick = () => {
+    onPlay?.(voicing);
+  };
+
   return (
     <div
       className={`
-        bg-white rounded-lg shadow-sm border border-gray-200
+        relative bg-white rounded-lg shadow-sm border border-gray-200
         hover:shadow-md hover:border-gray-300 transition-all duration-200
         flex flex-col items-center p-3
-        ${onClick ? "cursor-pointer" : ""}
+        ${onPlay ? "cursor-pointer" : ""}
+        ${isPlaying ? "ring-2 ring-blue-400 border-blue-400" : ""}
         ${className}
       `}
-      onClick={onClick}
+      onClick={handleClick}
     >
+      {/* Favorite Button */}
+      {onToggleFavorite && (
+        <div className="absolute top-2 right-2">
+          <FavoriteButton
+            isFavorite={isFavorite}
+            onToggle={() => onToggleFavorite(voicing.id)}
+          />
+        </div>
+      )}
+
       {/* Chord Diagram */}
       <ChordDiagram
         voicing={voicing}

@@ -6,14 +6,20 @@ interface ChordGridProps {
   voicings: ChordVoicing[];
   showFingers?: boolean;
   groupByType?: boolean;
-  onChordClick?: (voicing: ChordVoicing) => void;
+  onChordPlay?: (voicing: ChordVoicing) => void;
+  playingChordId?: string | null;
+  isFavorite?: (id: string) => boolean;
+  onToggleFavorite?: (id: string) => void;
 }
 
 export function ChordGrid({
   voicings,
   showFingers = false,
   groupByType = true,
-  onChordClick,
+  onChordPlay,
+  playingChordId,
+  isFavorite,
+  onToggleFavorite,
 }: ChordGridProps) {
   if (groupByType) {
     const grouped = groupVoicingsByType(voicings);
@@ -38,7 +44,10 @@ export function ChordGrid({
                     key={voicing.id}
                     voicing={voicing}
                     showFingers={showFingers}
-                    onClick={() => onChordClick?.(voicing)}
+                    onPlay={onChordPlay}
+                    isPlaying={playingChordId === voicing.id}
+                    isFavorite={isFavorite?.(voicing.id)}
+                    onToggleFavorite={onToggleFavorite}
                   />
                 ))}
               </div>
@@ -56,7 +65,10 @@ export function ChordGrid({
           key={voicing.id}
           voicing={voicing}
           showFingers={showFingers}
-          onClick={() => onChordClick?.(voicing)}
+          onPlay={onChordPlay}
+          isPlaying={playingChordId === voicing.id}
+          isFavorite={isFavorite?.(voicing.id)}
+          onToggleFavorite={onToggleFavorite}
         />
       ))}
     </div>

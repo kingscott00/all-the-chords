@@ -1,5 +1,5 @@
 import { ChordVoicing, ChordType, ChordCategory, ROOT_NOTES } from "../types";
-import { TRIADS, SEVENTHS } from "./masterShapes";
+import { TRIADS, SEVENTHS, EXTENDED } from "./masterShapes";
 import { generateVoicingsForRoot } from "./transpose";
 import { parseRootNote } from "../utils/noteUtils";
 
@@ -20,7 +20,7 @@ export function getVoicingsForRoot(
   }
 
   const root = parseRootNote(rootNote, preferFlat);
-  const allShapes = [...TRIADS, ...SEVENTHS];
+  const allShapes = [...TRIADS, ...SEVENTHS, ...EXTENDED];
   const voicings = generateVoicingsForRoot(allShapes, root, preferFlat);
 
   // Sort by chord type, then by position number
