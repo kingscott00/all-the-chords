@@ -1,0 +1,148 @@
+import { ChordType, ChordCategory, MasterChordShape } from "../../types";
+
+// Master shapes defined for 'E' root (allows easy transposition)
+// Strings array: [lowE, A, D, G, B, highE] - null = muted, 0 = open
+
+export const MAJOR_SHAPES: MasterChordShape[] = [
+  // E Shape (open E major, transposes to other roots as barre chord)
+  {
+    chordType: ChordType.MAJOR,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "E",
+    positionNumber: 1,
+    masterRoot: "E",
+    relativeFrets: [0, 2, 2, 1, 0, 0],
+    fingers: [0, 2, 3, 1, 0, 0],
+    barres: [],
+    rootStringIndices: [0, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+  // A Shape (open A major)
+  {
+    chordType: ChordType.MAJOR,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "A",
+    positionNumber: 2,
+    masterRoot: "A",
+    relativeFrets: [null, 0, 2, 2, 2, 0],
+    fingers: [null, 0, 1, 2, 3, 0],
+    barres: [],
+    rootStringIndices: [1, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+  // D Shape (open D major)
+  {
+    chordType: ChordType.MAJOR,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "D",
+    positionNumber: 3,
+    masterRoot: "D",
+    relativeFrets: [null, null, 0, 2, 3, 2],
+    fingers: [null, null, 0, 1, 3, 2],
+    barres: [],
+    rootStringIndices: [2],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+  // G Shape (open G major)
+  {
+    chordType: ChordType.MAJOR,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "G",
+    positionNumber: 4,
+    masterRoot: "G",
+    relativeFrets: [3, 2, 0, 0, 0, 3],
+    fingers: [2, 1, 0, 0, 0, 3],
+    barres: [],
+    rootStringIndices: [0, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 2,
+    commonUsage: true,
+  },
+  // C Shape (open C major)
+  {
+    chordType: ChordType.MAJOR,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "C",
+    positionNumber: 5,
+    masterRoot: "C",
+    relativeFrets: [null, 3, 2, 0, 1, 0],
+    fingers: [null, 3, 2, 0, 1, 0],
+    barres: [],
+    rootStringIndices: [1],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+];
+
+export const MINOR_SHAPES: MasterChordShape[] = [
+  // Em Shape (open E minor)
+  {
+    chordType: ChordType.MINOR,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "E",
+    positionNumber: 1,
+    masterRoot: "E",
+    relativeFrets: [0, 2, 2, 0, 0, 0],
+    fingers: [0, 2, 3, 0, 0, 0],
+    barres: [],
+    rootStringIndices: [0, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+  // Am Shape (open A minor)
+  {
+    chordType: ChordType.MINOR,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "A",
+    positionNumber: 2,
+    masterRoot: "A",
+    relativeFrets: [null, 0, 2, 2, 1, 0],
+    fingers: [null, 0, 2, 3, 1, 0],
+    barres: [],
+    rootStringIndices: [1, 5],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+  // Dm Shape (open D minor)
+  {
+    chordType: ChordType.MINOR,
+    category: ChordCategory.TRIAD,
+    subcategory: "caged",
+    cagedShape: "D",
+    positionNumber: 3,
+    masterRoot: "D",
+    relativeFrets: [null, null, 0, 2, 3, 1],
+    fingers: [null, null, 0, 2, 3, 1],
+    barres: [],
+    rootStringIndices: [2],
+    usesOpenStrings: true,
+    transposable: true,
+    difficulty: 1,
+    commonUsage: true,
+  },
+];
+
+export const TRIADS: MasterChordShape[] = [...MAJOR_SHAPES, ...MINOR_SHAPES];
