@@ -1,7 +1,11 @@
 import { useCallback, useRef, useState, useEffect } from "react";
-import * as Tone from "tone";
 import { ChordVoicing } from "../types";
 import { getMidiNote, midiToNoteName } from "../utils/noteUtils";
+
+// Tone.js types - we'll dynamically import the module
+type ToneType = typeof import("tone");
+type PluckSynthType = import("tone").PluckSynth;
+type GainType = import("tone").Gain;
 
 interface AudioSettings {
   volume: number; // 0-1
@@ -22,8 +26,9 @@ export function useAudio() {
   const [isReady, setIsReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [settings, setSettings] = useState<AudioSettings>(DEFAULT_SETTINGS);
-  const synthPoolRef = useRef<Tone.PluckSynth[]>([]);
-  const gainNodeRef = useRef<Tone.Gain | null>(null);
+  const synthPoolRef = useRef<PluckSynthType[]>([]);
+  const gainNodeRef = useRef<GainType | null>(null);
+  const toneRef = useRef<ToneType | null>(null);
   const initializingRef = useRef(false);
 
   // Initialize audio on first user interaction
@@ -32,6 +37,10 @@ export function useAudio() {
     initializingRef.current = true;
 
     try {
+      // Dynamically import Tone.js to avoid initialization issues in some environments
+      const Tone = await import("tone");
+      toneRef.current = Tone;
+
       await Tone.start();
 
       // Create a gain node for volume control
@@ -46,7 +55,7 @@ export function useAudio() {
 
       // Create a pool of PluckSynth instances for polyphony
       // PluckSynth uses Karplus-Strong algorithm for realistic plucked strings
-      const synthPool: Tone.PluckSynth[] = [];
+      const synthPool: PluckSynthType[] = [];
       for (let i = 0; i < VOICE_COUNT; i++) {
         const synth = new Tone.PluckSynth({
           attackNoise: 1.5, // Amount of initial "pluck" noise
@@ -113,6 +122,8 @@ export function useAudio() {
       });
 
       // Play notes with strum timing using individual synths
+      const Tone = toneRef.current;
+      if (!Tone) return;
       const now = Tone.now();
       notesToPlay.forEach(({ note, delay, synthIndex }) => {
         const synth = synthPoolRef.current[synthIndex];
