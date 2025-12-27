@@ -11,15 +11,19 @@ interface AudioSettings {
 
 const DEFAULT_SETTINGS: AudioSettings = {
   volume: 0.7,
-  strumSpeed: 40,
+  strumSpeed: 50, // Slightly slower for more natural strum
   muted: false,
 };
+
+// Number of PluckSynth instances for polyphony (6 strings = 6 voices)
+const VOICE_COUNT = 6;
 
 export function useAudio() {
   const [isReady, setIsReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [settings, setSettings] = useState<AudioSettings>(DEFAULT_SETTINGS);
-  const synthRef = useRef<Tone.PolySynth | null>(null);
+  const synthPoolRef = useRef<Tone.PluckSynth[]>([]);
+  const gainNodeRef = useRef<Tone.Gain | null>(null);
   const initializingRef = useRef(false);
 
   // Initialize audio on first user interaction
@@ -30,21 +34,30 @@ export function useAudio() {
     try {
       await Tone.start();
 
-      // Create a pluck-like synth for guitar simulation
-      const synth = new Tone.PolySynth(Tone.Synth, {
-        oscillator: {
-          type: "triangle",
-        },
-        envelope: {
-          attack: 0.005,
-          decay: 0.3,
-          sustain: 0.2,
-          release: 1.5,
-        },
-      }).toDestination();
+      // Create a gain node for volume control
+      const gain = new Tone.Gain(settings.volume).toDestination();
+      gainNodeRef.current = gain;
 
-      synth.volume.value = Tone.gainToDb(settings.volume);
-      synthRef.current = synth;
+      // Add subtle reverb for more natural sound
+      const reverb = new Tone.Reverb({
+        decay: 1.5,
+        wet: 0.15,
+      }).connect(gain);
+
+      // Create a pool of PluckSynth instances for polyphony
+      // PluckSynth uses Karplus-Strong algorithm for realistic plucked strings
+      const synthPool: Tone.PluckSynth[] = [];
+      for (let i = 0; i < VOICE_COUNT; i++) {
+        const synth = new Tone.PluckSynth({
+          attackNoise: 1.5, // Amount of initial "pluck" noise
+          dampening: 4000, // Lowpass filter frequency - higher = brighter
+          resonance: 0.98, // Sustain/ring time - higher = longer sustain
+          release: 1.2, // Release time after note ends
+        }).connect(reverb);
+        synthPool.push(synth);
+      }
+
+      synthPoolRef.current = synthPool;
       setIsReady(true);
     } catch (error) {
       console.error("Failed to initialize audio:", error);
@@ -55,16 +68,16 @@ export function useAudio() {
 
   // Update volume when settings change
   useEffect(() => {
-    if (synthRef.current) {
-      synthRef.current.volume.value = Tone.gainToDb(settings.volume);
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = settings.volume;
     }
   }, [settings.volume]);
 
-  // Play a single note
+  // Play a single note using the first available synth
   const playNote = useCallback(
     (note: string, duration: string = "2n") => {
-      if (!synthRef.current || settings.muted) return;
-      synthRef.current.triggerAttackRelease(note, duration);
+      if (synthPoolRef.current.length === 0 || settings.muted) return;
+      synthPoolRef.current[0].triggerAttackRelease(note, duration);
     },
     [settings.muted]
   );
@@ -77,13 +90,13 @@ export function useAudio() {
         await initAudio();
       }
 
-      if (!synthRef.current || settings.muted) return;
+      if (synthPoolRef.current.length === 0 || settings.muted) return;
       if (isPlaying) return; // Prevent overlapping plays
 
       setIsPlaying(true);
 
       // Calculate notes to play from the voicing
-      const notesToPlay: { note: string; delay: number }[] = [];
+      const notesToPlay: { note: string; delay: number; synthIndex: number }[] = [];
       let stringIndex = 0;
 
       voicing.strings.forEach((fret, idx) => {
@@ -93,24 +106,24 @@ export function useAudio() {
           notesToPlay.push({
             note: noteName,
             delay: stringIndex * settings.strumSpeed,
+            synthIndex: stringIndex % VOICE_COUNT, // Round-robin synth assignment
           });
           stringIndex++;
         }
       });
 
-      // Play notes with strum timing
+      // Play notes with strum timing using individual synths
       const now = Tone.now();
-      notesToPlay.forEach(({ note, delay }) => {
-        synthRef.current?.triggerAttackRelease(
-          note,
-          "2n",
-          now + delay / 1000
-        );
+      notesToPlay.forEach(({ note, delay, synthIndex }) => {
+        const synth = synthPoolRef.current[synthIndex];
+        if (synth) {
+          synth.triggerAttackRelease(note, "2n", now + delay / 1000);
+        }
       });
 
-      // Reset playing state after strum completes
+      // Reset playing state after strum completes plus sustain time
       const totalDuration =
-        notesToPlay.length * settings.strumSpeed + 100;
+        notesToPlay.length * settings.strumSpeed + 500;
       setTimeout(() => setIsPlaying(false), totalDuration);
     },
     [isReady, isPlaying, settings.muted, settings.strumSpeed, initAudio]
@@ -136,8 +149,9 @@ export function useAudio() {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (synthRef.current) {
-        synthRef.current.dispose();
+      synthPoolRef.current.forEach((synth) => synth.dispose());
+      if (gainNodeRef.current) {
+        gainNodeRef.current.dispose();
       }
     };
   }, []);
