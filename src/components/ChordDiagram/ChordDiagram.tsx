@@ -1,5 +1,6 @@
 import { ChordVoicing } from "../../types";
 import { toRomanNumeral } from "../../utils/romanNumerals";
+import { useTheme } from "../../hooks";
 
 interface ChordDiagramProps {
   voicing: ChordVoicing;
@@ -47,8 +48,16 @@ export function ChordDiagram({
   onClick,
   className = "",
 }: ChordDiagramProps) {
+  const { isDark } = useTheme();
   const svgWidth = width || SIZE_MAP[size];
   const showNut = voicing.startingFret === 1;
+
+  // Theme colors
+  const bgColor = isDark ? "#1f2937" : "white"; // gray-800 for dark
+  const lineColor = isDark ? "#9ca3af" : "black"; // gray-400 for dark
+  const dotColor = isDark ? "#e5e7eb" : "black"; // gray-200 for dark
+  const dotTextColor = isDark ? "#1f2937" : "white";
+  const rootInnerColor = isDark ? "#1f2937" : "white";
 
   // Calculate string X positions (0 = low E on left, 5 = high E on right)
   const getStringX = (stringIndex: number) => GRID_LEFT + stringIndex * STRING_SPACING;
@@ -70,7 +79,7 @@ export function ChordDiagram({
       aria-label={`${voicing.root} ${voicing.chordType} chord diagram`}
     >
       {/* Background */}
-      <rect width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT} fill="white" />
+      <rect width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT} fill={bgColor} />
 
       {/* Nut or fret position indicator */}
       {showNut ? (
@@ -80,7 +89,7 @@ export function ChordDiagram({
           y={GRID_TOP - 3}
           width={GRID_RIGHT - GRID_LEFT + 4}
           height={4}
-          fill="black"
+          fill={lineColor}
           rx={1}
         />
       ) : (
@@ -92,7 +101,7 @@ export function ChordDiagram({
           fontWeight="bold"
           textAnchor="middle"
           dominantBaseline="middle"
-          fill="black"
+          fill={lineColor}
         >
           {toRomanNumeral(voicing.startingFret)}
         </text>
@@ -106,7 +115,7 @@ export function ChordDiagram({
           y1={getFretY(i)}
           x2={GRID_RIGHT}
           y2={getFretY(i)}
-          stroke="black"
+          stroke={lineColor}
           strokeWidth={i === 0 && !showNut ? 1 : 1}
         />
       ))}
@@ -119,7 +128,7 @@ export function ChordDiagram({
           y1={GRID_TOP}
           x2={getStringX(i)}
           y2={GRID_BOTTOM}
-          stroke="black"
+          stroke={lineColor}
           strokeWidth={1}
         />
       ))}
@@ -137,7 +146,7 @@ export function ChordDiagram({
                 y1={MARKER_Y - 4}
                 x2={x + 4}
                 y2={MARKER_Y + 4}
-                stroke="black"
+                stroke={lineColor}
                 strokeWidth={1.5}
               />
               <line
@@ -145,7 +154,7 @@ export function ChordDiagram({
                 y1={MARKER_Y - 4}
                 x2={x - 4}
                 y2={MARKER_Y + 4}
-                stroke="black"
+                stroke={lineColor}
                 strokeWidth={1.5}
               />
             </g>
@@ -161,7 +170,7 @@ export function ChordDiagram({
               cy={MARKER_Y}
               r={4}
               fill="none"
-              stroke="black"
+              stroke={lineColor}
               strokeWidth={1.5}
             />
           );
@@ -186,7 +195,7 @@ export function ChordDiagram({
             y={y - 4}
             width={Math.abs(x2 - x1)}
             height={8}
-            fill="black"
+            fill={dotColor}
             rx={4}
           />
         );
@@ -207,11 +216,11 @@ export function ChordDiagram({
         return (
           <g key={`dot-${stringIndex}`}>
             {/* Main dot */}
-            <circle cx={x} cy={y} r={DOT_RADIUS} fill="black" />
+            <circle cx={x} cy={y} r={DOT_RADIUS} fill={dotColor} />
 
-            {/* Root note indicator - white inner circle */}
+            {/* Root note indicator - inner circle */}
             {isRoot && (
-              <circle cx={x} cy={y} r={ROOT_DOT_INNER_RADIUS} fill="white" />
+              <circle cx={x} cy={y} r={ROOT_DOT_INNER_RADIUS} fill={rootInnerColor} />
             )}
 
             {/* Finger number */}
@@ -220,7 +229,7 @@ export function ChordDiagram({
                 x={x}
                 y={y}
                 fontSize={8}
-                fill="white"
+                fill={dotTextColor}
                 textAnchor="middle"
                 dominantBaseline="middle"
               >

@@ -31,7 +31,7 @@ export function Favorites() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 py-6">
@@ -41,7 +41,7 @@ export function Favorites() {
             <div className="flex items-center gap-3">
               <Link
                 to="/chords/a"
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
               >
                 <svg
                   className="w-6 h-6"
@@ -57,7 +57,7 @@ export function Favorites() {
                   />
                 </svg>
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 <svg
                   className="w-6 h-6 text-red-500"
                   fill="currentColor"
@@ -85,7 +85,7 @@ export function Favorites() {
               </button>
             )}
           </div>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             {favoriteCount} saved chord{favoriteCount !== 1 ? "s" : ""}
           </p>
         </section>
@@ -93,21 +93,21 @@ export function Favorites() {
         {/* Options */}
         {favoriteCount > 0 && (
           <section className="mb-6 flex flex-wrap items-center gap-4">
-            <label className="flex items-center gap-2 text-sm text-gray-600">
+            <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <input
                 type="checkbox"
                 checked={showFingers}
                 onChange={(e) => setShowFingers(e.target.checked)}
-                className="rounded border-gray-300"
+                className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700"
               />
               Show finger numbers
             </label>
-            <label className="flex items-center gap-2 text-sm text-gray-600">
+            <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <input
                 type="checkbox"
                 checked={settings.muted}
                 onChange={(e) => setMuted(e.target.checked)}
-                className="rounded border-gray-300"
+                className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700"
               />
               Mute audio
             </label>
@@ -129,7 +129,7 @@ export function Favorites() {
           ) : (
             <div className="text-center py-16">
               <svg
-                className="w-16 h-16 text-gray-300 mx-auto mb-4"
+                className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -141,10 +141,10 @@ export function Favorites() {
                   d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                 />
               </svg>
-              <h2 className="text-xl font-semibold text-gray-700 mb-2">
+              <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 No favorites yet
               </h2>
-              <p className="text-gray-500 mb-6">
+              <p className="text-gray-500 dark:text-gray-400 mb-6">
                 Click the heart icon on any chord to save it here.
               </p>
               <Link

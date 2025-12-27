@@ -82,9 +82,9 @@ export function SearchBar({
           }}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full px-4 py-2 pl-10 pr-10 border border-gray-300 rounded-lg
+          className="w-full px-4 py-2 pl-10 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg
                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                     bg-white text-gray-900 placeholder-gray-400"
+                     bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         />
         {/* Search Icon */}
         <svg
@@ -107,7 +107,7 @@ export function SearchBar({
               onClear();
               inputRef.current?.focus();
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -125,7 +125,7 @@ export function SearchBar({
       {showResults && (
         <div
           ref={resultsRef}
-          className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-auto"
+          className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-96 overflow-auto"
         >
           {results.length > 0 ? (
             <ul className="py-1">
@@ -138,7 +138,7 @@ export function SearchBar({
                     key={result.voicing.id}
                     className={`
                       flex items-center gap-3 px-4 py-2 cursor-pointer
-                      ${index === selectedIndex ? "bg-blue-50" : "hover:bg-gray-50"}
+                      ${index === selectedIndex ? "bg-blue-50 dark:bg-blue-900" : "hover:bg-gray-50 dark:hover:bg-gray-700"}
                     `}
                     onClick={() => onSelectResult?.(result)}
                   >
@@ -152,10 +152,10 @@ export function SearchBar({
                     </div>
                     {/* Chord info */}
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-gray-900">
+                      <div className="font-semibold text-gray-900 dark:text-white">
                         {chordName}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         {info.name}
                         {result.voicing.cagedShape && ` - ${result.voicing.cagedShape} Shape`}
                       </div>
@@ -164,13 +164,13 @@ export function SearchBar({
                 );
               })}
               {results.length > 10 && (
-                <li className="px-4 py-2 text-sm text-gray-500 text-center border-t">
+                <li className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 text-center border-t dark:border-gray-700">
                   +{results.length - 10} more results
                 </li>
               )}
             </ul>
           ) : (
-            <div className="px-4 py-3 text-sm text-gray-500">
+            <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
               No chords found for "{query}"
             </div>
           )}

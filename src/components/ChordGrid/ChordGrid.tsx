@@ -1,6 +1,7 @@
 import { ChordVoicing, ChordType, CHORD_TYPE_INFO } from "../../types";
 import { ChordCard } from "../ChordCard";
 import { groupVoicingsByType } from "../../data/chordDatabase";
+import { useKeyboardNav } from "../../hooks";
 
 interface ChordGridProps {
   voicings: ChordVoicing[];
@@ -10,6 +11,7 @@ interface ChordGridProps {
   playingChordId?: string | null;
   isFavorite?: (id: string) => boolean;
   onToggleFavorite?: (id: string) => void;
+  enableKeyboardNav?: boolean;
 }
 
 export function ChordGrid({
@@ -20,7 +22,18 @@ export function ChordGrid({
   playingChordId,
   isFavorite,
   onToggleFavorite,
+  enableKeyboardNav = true,
 }: ChordGridProps) {
+  const { focusedIndex, containerRef } = useKeyboardNav({
+    voicings,
+    onSelect: onChordPlay,
+    enabled: enableKeyboardNav,
+  });
+
+  // Build a map from voicing ID to absolute index for keyboard nav
+  const voicingIndexMap = new Map<string, number>();
+  voicings.forEach((v, i) => voicingIndexMap.set(v.id, i));
+
   if (groupByType) {
     const grouped = groupVoicingsByType(voicings);
     const sortedTypes = Array.from(grouped.keys()).sort((a, b) => {
@@ -28,28 +41,33 @@ export function ChordGrid({
     });
 
     return (
-      <div className="space-y-8">
+      <div ref={containerRef} className="space-y-8">
         {sortedTypes.map((type) => {
           const typeVoicings = grouped.get(type) || [];
           const typeInfo = CHORD_TYPE_INFO[type];
 
           return (
             <section key={type}>
-              <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
                 {typeInfo.name} Chords
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {typeVoicings.map((voicing) => (
-                  <ChordCard
-                    key={voicing.id}
-                    voicing={voicing}
-                    showFingers={showFingers}
-                    onPlay={onChordPlay}
-                    isPlaying={playingChordId === voicing.id}
-                    isFavorite={isFavorite?.(voicing.id)}
-                    onToggleFavorite={onToggleFavorite}
-                  />
-                ))}
+                {typeVoicings.map((voicing) => {
+                  const absoluteIndex = voicingIndexMap.get(voicing.id) ?? -1;
+                  return (
+                    <ChordCard
+                      key={voicing.id}
+                      voicing={voicing}
+                      showFingers={showFingers}
+                      onPlay={onChordPlay}
+                      isPlaying={playingChordId === voicing.id}
+                      isFavorite={isFavorite?.(voicing.id)}
+                      onToggleFavorite={onToggleFavorite}
+                      isKeyboardFocused={absoluteIndex === focusedIndex}
+                      index={absoluteIndex}
+                    />
+                  );
+                })}
               </div>
             </section>
           );
@@ -59,8 +77,8 @@ export function ChordGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-      {voicings.map((voicing) => (
+    <div ref={containerRef} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      {voicings.map((voicing, index) => (
         <ChordCard
           key={voicing.id}
           voicing={voicing}
@@ -69,6 +87,8 @@ export function ChordGrid({
           isPlaying={playingChordId === voicing.id}
           isFavorite={isFavorite?.(voicing.id)}
           onToggleFavorite={onToggleFavorite}
+          isKeyboardFocused={index === focusedIndex}
+          index={index}
         />
       ))}
     </div>

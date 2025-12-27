@@ -100,6 +100,8 @@ export interface MasterChordShape {
   transposable: boolean; // False for open-position-only voicings
   difficulty: number;
   commonUsage: boolean;
+  isInversion?: boolean; // True if bass note is not the root
+  inversionNumber?: number; // 1st inversion, 2nd inversion, etc.
 }
 
 // Chord diagram component props

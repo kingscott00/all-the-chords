@@ -79,14 +79,14 @@ export function ChordBrowser() {
   const displayRoot = parseRootNote(selectedRoot, preferFlat);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 py-6">
         {/* Root Note Selection */}
         <section className="mb-6">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-gray-700">Root Note</h2>
+            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Root Note</h2>
             <div className="flex items-center gap-4">
               {favoriteCount > 0 && (
                 <Link
@@ -101,7 +101,7 @@ export function ChordBrowser() {
               )}
               <button
                 onClick={() => setPreferFlat(!preferFlat)}
-                className="text-sm text-blue-600 hover:text-blue-700"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
               >
                 {preferFlat ? "Show Sharps" : "Show Flats"}
               </button>
@@ -116,7 +116,7 @@ export function ChordBrowser() {
 
         {/* Category / Type Navigation */}
         <section className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-700 mb-3">
+          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">
             Chord Type
           </h2>
           <CategoryNav
@@ -130,21 +130,21 @@ export function ChordBrowser() {
 
         {/* Options */}
         <section className="mb-6 flex flex-wrap items-center gap-4">
-          <label className="flex items-center gap-2 text-sm text-gray-600">
+          <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <input
               type="checkbox"
               checked={showFingers}
               onChange={(e) => setShowFingers(e.target.checked)}
-              className="rounded border-gray-300"
+              className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700"
             />
             Show finger numbers
           </label>
-          <label className="flex items-center gap-2 text-sm text-gray-600">
+          <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <input
               type="checkbox"
               checked={settings.muted}
               onChange={(e) => setMuted(e.target.checked)}
-              className="rounded border-gray-300"
+              className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700"
             />
             Mute audio
           </label>
@@ -153,15 +153,15 @@ export function ChordBrowser() {
         {/* Chord Grid */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               {displayRoot} Chords
             </h2>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {voicings.length} voicing{voicings.length !== 1 ? "s" : ""}
             </span>
           </div>
 
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             Click any chord to hear it. Click the heart to save to favorites.
           </p>
 
@@ -176,7 +176,7 @@ export function ChordBrowser() {
               onToggleFavorite={toggleFavorite}
             />
           ) : (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
               No voicings found for this selection.
             </div>
           )}

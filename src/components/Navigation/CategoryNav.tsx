@@ -45,8 +45,8 @@ export function CategoryNav({
               transition-colors duration-200
               ${
                 selectedCategory === value
-                  ? "bg-gray-800 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
               }
             `}
           >
@@ -65,8 +65,8 @@ export function CategoryNav({
               transition-colors duration-200
               ${
                 selectedChordType === null
-                  ? "bg-blue-100 text-blue-700 font-medium"
-                  : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                  ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium"
+                  : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
               }
             `}
           >
@@ -83,8 +83,8 @@ export function CategoryNav({
                   transition-colors duration-200
                   ${
                     selectedChordType === type
-                      ? "bg-blue-100 text-blue-700 font-medium"
-                      : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                      ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium"
+                      : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
                   }
                 `}
               >
