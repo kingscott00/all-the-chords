@@ -49,7 +49,7 @@ function AnimatedRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/all-the-chords">
       <AnimatedRoutes />
     </BrowserRouter>
   );
