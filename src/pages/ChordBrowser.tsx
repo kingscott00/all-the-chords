@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { ChordCategory, ChordType, ChordVoicing, ROOT_NOTES } from "../types";
 import { Header, RootSelector, CategoryNav } from "../components/Navigation";
 import { ChordGrid } from "../components/ChordGrid";
+import { FretboardModal } from "../components/Fretboard";
 import {
   getVoicingsForRoot,
   getVoicingsByCategory,
@@ -39,6 +40,7 @@ export function ChordBrowser() {
   );
   const [showFingers, setShowFingers] = useState(false);
   const [preferFlat, setPreferFlat] = useState(false);
+  const [fretboardVoicing, setFretboardVoicing] = useState<ChordVoicing | null>(null);
 
   // Get available chord types for the selected root
   const availableTypes = useMemo(
@@ -148,6 +150,25 @@ export function ChordBrowser() {
             />
             Mute audio
           </label>
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+              />
+            </svg>
+            Print Chords
+          </button>
         </section>
 
         {/* Chord Grid */}
@@ -174,6 +195,7 @@ export function ChordBrowser() {
               playingChordId={playingChordId}
               isFavorite={isFavorite}
               onToggleFavorite={toggleFavorite}
+              onShowFretboard={setFretboardVoicing}
             />
           ) : (
             <div className="text-center py-12 text-gray-500 dark:text-gray-400">
@@ -182,6 +204,14 @@ export function ChordBrowser() {
           )}
         </section>
       </main>
+
+      {/* Fretboard Modal */}
+      <FretboardModal
+        voicing={fretboardVoicing}
+        isOpen={fretboardVoicing !== null}
+        onClose={() => setFretboardVoicing(null)}
+        onPlay={handleChordPlay}
+      />
     </div>
   );
 }

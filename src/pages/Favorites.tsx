@@ -1,14 +1,18 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChordVoicing } from "../types";
 import { Header } from "../components/Navigation";
 import { ChordGrid } from "../components/ChordGrid";
+import { FretboardModal } from "../components/Fretboard";
 import { useAudio, useFavorites } from "../hooks";
 
 export function Favorites() {
   const { playChord, isPlaying, settings, setMuted } = useAudio();
   const [playingChordId, setPlayingChordId] = useState<string | null>(null);
   const [showFingers, setShowFingers] = useState(false);
+  const [fretboardVoicing, setFretboardVoicing] = useState<ChordVoicing | null>(null);
+  const [importStatus, setImportStatus] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     getFavoriteVoicings,
@@ -16,6 +20,8 @@ export function Favorites() {
     toggleFavorite,
     clearAll,
     favoriteCount,
+    exportFavorites,
+    importFavorites,
   } = useFavorites();
 
   const favorites = getFavoriteVoicings();
@@ -29,6 +35,44 @@ export function Favorites() {
     },
     [playChord, isPlaying]
   );
+
+  const handleExport = () => {
+    const data = exportFavorites();
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "all-the-chords-favorites.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      const success = importFavorites(content);
+      if (success) {
+        setImportStatus("Favorites imported successfully!");
+      } else {
+        setImportStatus("Failed to import - invalid file format.");
+      }
+      setTimeout(() => setImportStatus(null), 3000);
+    };
+    reader.readAsText(file);
+
+    // Reset input so the same file can be selected again
+    e.target.value = "";
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -68,26 +112,63 @@ export function Favorites() {
                 Favorites
               </h1>
             </div>
-            {favoriteCount > 0 && (
+            <div className="flex items-center gap-3">
+              {/* Hidden file input for import */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                onChange={handleFileChange}
+                className="hidden"
+              />
               <button
-                onClick={() => {
-                  if (
-                    window.confirm(
-                      "Are you sure you want to clear all favorites?"
-                    )
-                  ) {
-                    clearAll();
-                  }
-                }}
-                className="text-sm text-red-500 hover:text-red-600"
+                onClick={handleImportClick}
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
               >
-                Clear All
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                Import
               </button>
+              {favoriteCount > 0 && (
+                <>
+                  <button
+                    onClick={handleExport}
+                    className="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Export
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          "Are you sure you want to clear all favorites?"
+                        )
+                      ) {
+                        clearAll();
+                      }
+                    }}
+                    className="text-sm text-red-500 hover:text-red-600"
+                  >
+                    Clear All
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <p className="text-gray-600 dark:text-gray-400">
+              {favoriteCount} saved chord{favoriteCount !== 1 ? "s" : ""}
+            </p>
+            {importStatus && (
+              <p className={`text-sm ${importStatus.includes("success") ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+                {importStatus}
+              </p>
             )}
           </div>
-          <p className="text-gray-600 dark:text-gray-400">
-            {favoriteCount} saved chord{favoriteCount !== 1 ? "s" : ""}
-          </p>
         </section>
 
         {/* Options */}
@@ -125,6 +206,7 @@ export function Favorites() {
               playingChordId={playingChordId}
               isFavorite={isFavorite}
               onToggleFavorite={toggleFavorite}
+              onShowFretboard={setFretboardVoicing}
             />
           ) : (
             <div className="text-center py-16">
@@ -157,6 +239,14 @@ export function Favorites() {
           )}
         </section>
       </main>
+
+      {/* Fretboard Modal */}
+      <FretboardModal
+        voicing={fretboardVoicing}
+        isOpen={fretboardVoicing !== null}
+        onClose={() => setFretboardVoicing(null)}
+        onPlay={handleChordPlay}
+      />
     </div>
   );
 }

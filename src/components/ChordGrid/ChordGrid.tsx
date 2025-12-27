@@ -11,6 +11,7 @@ interface ChordGridProps {
   playingChordId?: string | null;
   isFavorite?: (id: string) => boolean;
   onToggleFavorite?: (id: string) => void;
+  onShowFretboard?: (voicing: ChordVoicing) => void;
   enableKeyboardNav?: boolean;
 }
 
@@ -22,6 +23,7 @@ export function ChordGrid({
   playingChordId,
   isFavorite,
   onToggleFavorite,
+  onShowFretboard,
   enableKeyboardNav = true,
 }: ChordGridProps) {
   const { focusedIndex, containerRef } = useKeyboardNav({
@@ -63,6 +65,7 @@ export function ChordGrid({
                       isPlaying={playingChordId === voicing.id}
                       isFavorite={isFavorite?.(voicing.id)}
                       onToggleFavorite={onToggleFavorite}
+                      onShowFretboard={onShowFretboard}
                       isKeyboardFocused={absoluteIndex === focusedIndex}
                       index={absoluteIndex}
                     />
@@ -87,6 +90,7 @@ export function ChordGrid({
           isPlaying={playingChordId === voicing.id}
           isFavorite={isFavorite?.(voicing.id)}
           onToggleFavorite={onToggleFavorite}
+          onShowFretboard={onShowFretboard}
           isKeyboardFocused={index === focusedIndex}
           index={index}
         />

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Home, ChordBrowser, Favorites } from "./pages";
+import { Home, ChordBrowser, Favorites, Compare } from "./pages";
 
 function App() {
   return (
@@ -9,6 +9,7 @@ function App() {
         <Route path="/chords" element={<Navigate to="/chords/a" replace />} />
         <Route path="/chords/:root" element={<ChordBrowser />} />
         <Route path="/favorites" element={<Favorites />} />
+        <Route path="/compare" element={<Compare />} />
       </Routes>
     </BrowserRouter>
   );

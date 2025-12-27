@@ -9,6 +9,7 @@ interface ChordCardProps {
   isPlaying?: boolean;
   isFavorite?: boolean;
   onToggleFavorite?: (id: string) => void;
+  onShowFretboard?: (voicing: ChordVoicing) => void;
   isKeyboardFocused?: boolean;
   index?: number;
   className?: string;
@@ -21,6 +22,7 @@ export function ChordCard({
   isPlaying = false,
   isFavorite = false,
   onToggleFavorite,
+  onShowFretboard,
   isKeyboardFocused = false,
   index,
   className = "",
@@ -47,15 +49,29 @@ export function ChordCard({
       data-chord-index={index}
       tabIndex={isKeyboardFocused ? 0 : -1}
     >
-      {/* Favorite Button */}
-      {onToggleFavorite && (
-        <div className="absolute top-2 right-2">
+      {/* Action Buttons */}
+      <div className="absolute top-2 right-2 flex gap-1">
+        {onShowFretboard && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onShowFretboard(voicing);
+            }}
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+            title="Show on fretboard"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+          </button>
+        )}
+        {onToggleFavorite && (
           <FavoriteButton
             isFavorite={isFavorite}
             onToggle={() => onToggleFavorite(voicing.id)}
           />
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Chord Diagram */}
       <ChordDiagram
